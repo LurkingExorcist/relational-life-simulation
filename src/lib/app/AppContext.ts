@@ -1,3 +1,1 @@
-export class AppContext {
-  
-}
+export class AppContext {}

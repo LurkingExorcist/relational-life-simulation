@@ -1,51 +1,35 @@
-import _ from "lodash";
-import { IApp, ICanvas, IService, ITimeEngine, ServiceFn } from "./types";
+import { IContexted, IInitable, ILayer, LayerFn } from '@/lib/core/types';
 
-export class App implements IApp {
-  private canvas: ICanvas;
-  private timeEngine: ITimeEngine;
-  private services: IService<any>[] = [];
+import { _Object } from '../core';
 
-  constructor(options: { canvas: ICanvas; timeEngine: ITimeEngine }) {
-    this.canvas = options.canvas;
-    this.timeEngine = options.timeEngine;
+export class App<C extends _Object> implements IContexted<C>, IInitable {
+  private _context: C;
+  private _layers: ILayer<any>[];
+
+  constructor(context: C, layers: ILayer<C>[] = []) {
+    this._context = context;
+    this._layers = layers;
   }
 
-  public mount(el: HTMLElement) {
-    el.appendChild(this.canvas.getElement());
+  init() {
+    this._layers.forEach((layer) => layer.init());
 
     return this;
   }
 
-  public run() {
-    this.services.forEach((service) => service.init?.());
-
-    this.timeEngine.update((opt) => {
-      this.services.forEach((service) => {
-        service.update?.({
-          ...opt,
-          canvas: this.canvas,
-        });
-      });
-    });
-
-    return this;
+  get ctx(): C {
+    return this._context;
   }
 
-  public install(service: IService | ServiceFn) {
-    this.services.push(
-      _.cond<IService | ServiceFn, IService>([
-        [
-          _.isFunction,
-          (fn: any) =>
-            fn({
-              canvas: this.canvas,
-            }),
-        ],
-        [_.isObject, _.identity],
-      ])(service)
-    );
+  set ctx(value: C) {
+    Object.assign(this._context, value);
+  }
 
-    return this;
+  install<OutputContext extends C>(
+    layerFn: LayerFn<C, OutputContext>
+  ): App<OutputContext> {
+    const layer = layerFn(this.ctx);
+
+    return new App<OutputContext>(layer.ctx, [...this._layers, layer]);
   }
 }

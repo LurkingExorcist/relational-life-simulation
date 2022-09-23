@@ -1,4 +1,7 @@
-import _ from "lodash";
+import _ from 'lodash';
+
+import { EntityOptions } from './entity';
+
 import {
   IComponent,
   IDrawable,
@@ -6,9 +9,8 @@ import {
   IPoint,
   IRenderOptions,
   ITimeOptions,
-} from "../app/types";
-import { Space } from "../space";
-import { EntityOptions } from "./entity";
+} from '../app/types';
+import { Vector2 } from '../space';
 
 export interface IEntity
   extends IComponent<EntityOptions>,
@@ -98,7 +100,7 @@ export class Life
         }
       });
 
-      entity1.velocity = new Space.Vector2(
+      entity1.velocity = new Vector2(
         (entity1.velocity.x + fx) * 0.5,
         (entity1.velocity.y + fy) * 0.5
       );
@@ -108,9 +110,9 @@ export class Life
     });
   }
 
-  shiftEntities(entities: IEntity[], offset: Space.Vector2) {
+  shiftEntities(entities: IEntity[], offset: Vector2) {
     return entities.map((entity) => {
-      entity.position.add(offset.mulVec(new Space.Vector2(0, 1)));
+      entity.position.add(offset.mulVec(new Vector2(0, 1)));
       return entity;
     });
   }
@@ -118,11 +120,7 @@ export class Life
   simulate(options: IRenderOptions & ITimeOptions) {
     const { rules, entities } = this.options;
     rules.map((rule) => {
-      this.relation(
-        entities,
-        entities,
-        { ...rule, ...options }
-      );
+      this.relation(entities, entities, { ...rule, ...options });
     });
   }
 

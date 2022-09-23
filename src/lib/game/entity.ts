@@ -1,16 +1,17 @@
-import _ from "lodash";
+import _ from 'lodash';
+
 import {
   IComponent,
   IDrawable,
   ILifeCycled,
   IPoint,
   ITimeOptions,
-} from "../app/types";
-import { Space } from "../space";
+} from '../app/types';
+import { Vector2 } from '../space';
 
 export type EntityOptions = {
-  position: Space.Vector2;
-  type: "stroke" | "fill";
+  position: Vector2;
+  type: 'stroke' | 'fill';
   color: string;
   /** from 0 to 1 */
   sharpness: number;
@@ -26,11 +27,11 @@ export class Entity
     IPoint,
     ILifeCycled<ITimeOptions>
 {
-  private shape: Space.Vector2[] = [];
+  private shape: Vector2[] = [];
   options: EntityOptions;
 
-  velocity: Space.Vector2 = new Space.Vector2(0, 0);
-  position: Space.Vector2;
+  velocity: Vector2 = new Vector2(0, 0);
+  position: Vector2;
 
   constructor(options: EntityOptions) {
     this.options = options;
@@ -40,7 +41,7 @@ export class Entity
   get pivot() {
     const { scale } = this.options;
 
-    return this.position.add(new Space.Vector2(scale, scale));
+    return this.position.add(new Vector2(scale, scale));
   }
 
   init() {
@@ -49,7 +50,7 @@ export class Entity
 
   setShape(time = 0) {
     const { anglesCount, scale, sharpness } = this.options;
-    const shape: Space.Vector2[] = [];
+    const shape: Vector2[] = [];
 
     const seed = Math.round(sharpness * 64);
 
@@ -60,12 +61,16 @@ export class Entity
     ) {
       const x =
         Math.cos(angle) * scale +
-        (Math.cos(angle * seed + time / 1000 * sharpness) * 2 - 1) * sharpness * scale;
+        (Math.cos(angle * seed + (time / 1000) * sharpness) * 2 - 1) *
+          sharpness *
+          scale;
       const y =
         Math.sin(angle) * scale +
-        (Math.sin(angle * seed + time / 1000 * sharpness) * 2 - 1) * sharpness * scale;
+        (Math.sin(angle * seed + (time / 1000) * sharpness) * 2 - 1) *
+          sharpness *
+          scale;
 
-      shape.push(new Space.Vector2(x, y));
+      shape.push(new Vector2(x, y));
     }
 
     this.shape = shape;
@@ -91,12 +96,14 @@ export class Entity
     });
 
     switch (type) {
-      case "fill":
+      case 'fill':
         ctx.fillStyle = color;
         ctx.fill();
-      case "stroke":
+        break;
+      case 'stroke':
         ctx.strokeStyle = color;
         ctx.stroke();
+        break;
     }
   }
 }

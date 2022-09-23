@@ -1,17 +1,18 @@
-import { Space } from "../space";
-import { CanvasOptions, ICanvas, IDrawable } from "./types";
+import { CanvasOptions, ICanvas, IDrawable } from './types';
+
+import { Vector2 } from '../space';
 
 export class Canvas implements ICanvas {
   private element: HTMLCanvasElement;
 
   constructor(options: CanvasOptions) {
-    this.element = document.createElement("canvas");
+    this.element = document.createElement('canvas');
     this.element.width = options.width;
     this.element.height = options.height;
   }
 
   private get ctx() {
-    const ctx = this.element.getContext("2d");
+    const ctx = this.element.getContext('2d');
 
     if (!ctx) {
       throw new Error("Can't get canvas context");
@@ -23,7 +24,7 @@ export class Canvas implements ICanvas {
   public get size() {
     const { width, height } = this.getElement();
 
-    return new Space.Vector2(width, height);
+    return new Vector2(width, height);
   }
 
   public getElement() {

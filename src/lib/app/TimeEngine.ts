@@ -1,4 +1,4 @@
-import { ITimeEngine, TimeEngineUpdateCallback } from "./types";
+import { ITimeEngine, TimeEngineUpdateCallback } from './types';
 
 export class TimeEngine implements ITimeEngine {
   private dT = 0;

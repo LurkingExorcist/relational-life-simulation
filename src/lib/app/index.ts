@@ -1,3 +1,3 @@
-export * from './App'
-export * from './Canvas'
-export * from './TimeEngine'
+export * from './App';
+export * from './Canvas';
+export * from './TimeEngine';

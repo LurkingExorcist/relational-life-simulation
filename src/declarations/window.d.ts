@@ -1,4 +1,4 @@
-import { App } from "../lib";
+import { App } from '../lib';
 
 declare global {
   interface Window {

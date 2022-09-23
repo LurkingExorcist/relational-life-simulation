@@ -1,16 +1,25 @@
+import { _Object } from './alias';
+
 import { Vector2 } from '../space';
 
-export interface IService<O extends Record<string, any> = any>
-  extends IComponent<O>,
-    ILifeCycled<ITimeOptions & IRenderOptions> {}
-
-export type ServiceFn = (ctx: IRenderOptions) => IService;
-
-export interface IApp {
-  mount(el: HTMLElement): IApp;
-  run(): IApp;
-  install(service: IService | ServiceFn): IApp;
+export interface IMountable {
+  mount(el: HTMLElement): this;
 }
+
+export interface IContexted<C extends _Object> {
+  get ctx(): C;
+  set ctx(value: C);
+}
+
+export interface IInitable {
+  init(): this;
+}
+
+export interface ILayer<C extends _Object> extends IContexted<C>, IInitable {}
+
+export type LayerFn<IC extends _Object, OC extends IC> = (
+  ctx: IC
+) => ILayer<OC>;
 
 export interface ICanvas {
   size: Vector2;
@@ -38,7 +47,7 @@ export interface IRenderOptions {
   canvas: ICanvas;
 }
 
-export interface IComponent<O extends Record<string, any> = any> {
+export interface IComponent<O extends _Object = any> {
   options: O;
 }
 
